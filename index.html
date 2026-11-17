@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5f4f0" />
+  <meta name="description" content="A local-first Markdown vault for snippets, decisions, and fixes." />
+  <title>Foldd — your working memory, in Markdown</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="Foldd home"><span class="brand-mark">f.</span><span>foldd</span><span class="brand-beta">LOCAL</span></a>
+      <div class="workspace-label">YOUR WORKSPACE <button class="icon-button tiny" title="Workspace options">···</button></div>
+      <button class="nav-item active" data-filter="all"><span class="nav-icon">⌂</span> All notes <span class="nav-count" id="allCount">0</span></button>
+      <button class="nav-item" data-filter="starred"><span class="nav-icon">☆</span> Starred <span class="nav-count" id="starCount">0</span></button>
+      <button class="nav-item" data-filter="recent"><span class="nav-icon">◷</span> Recently edited</button>
+      <div class="sidebar-section"><span>PROJECTS</span><button class="icon-button tiny" id="addProject" title="Add project">＋</button></div>
+      <div id="projectList" class="project-list"></div>
+      <div class="sidebar-section tag-heading"><span>POPULAR TAGS</span></div>
+      <div id="tagList" class="tag-list"></div>
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="importButton"><span class="nav-icon">↥</span> Import Markdown</button>
+        <button class="nav-item" id="exportButton"><span class="nav-icon">↧</span> Export vault</button>
+        <div class="storage-card"><div class="storage-icon">◉</div><div><strong>Stored on this device</strong><small>Your notes never leave your browser.</small></div><span class="online-dot"></span></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>Workspace</span><span class="crumb-slash">/</span><strong id="currentView">All notes</strong></div>
+        <div class="top-actions"><button class="search-trigger" id="searchTrigger"><span>⌕</span> Search anything... <kbd>⌘ K</kbd></button><button class="avatar" title="Local workspace">B</button></div>
+      </header>
+      <section class="content-wrap">
+        <div class="page-heading"><div><div class="eyebrow"><span class="pulse"></span> YOUR SECOND BRAIN, SORTED</div><h1 id="pageTitle">All notes<span class="title-period">.</span></h1><p id="pageSubtitle">The useful bits you don’t want to have to remember.</p></div><button class="primary-button" id="newNote"><span>＋</span> New note <kbd>N</kbd></button></div>
+        <div class="filter-row"><div class="filter-chips"><button class="filter-chip selected" data-kind="all">Everything</button><button class="filter-chip" data-kind="snippet">Snippets <span>⌘1</span></button><button class="filter-chip" data-kind="decision">Decisions <span>⌘2</span></button><button class="filter-chip" data-kind="fix">Troubleshooting <span>⌘3</span></button></div><button class="sort-button" id="sortButton">Recently edited <span>⌄</span></button></div>
+        <div id="noteGrid" class="note-grid"></div>
+        <div id="emptyState" class="empty-state hidden"><div class="empty-art"><span>✳</span><i></i><b></b></div><h2>Start your working memory</h2><p>Save that Rails fix. Keep the command you always forget.<br>Give the good stuff a place to live.</p><button class="primary-button" id="emptyNew">＋ Write your first note</button></div>
+        <footer class="page-footer"><span>Made for the things you’ll need again.</span><span><kbd>?</kbd> Keyboard shortcuts <span class="footer-dot">·</span> <span id="noteTotal">0 notes</span></span></footer>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="editorModal" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+    <section class="editor-modal"><header class="editor-top"><button class="icon-button close-editor" id="closeEditor" aria-label="Close">×</button><span class="editor-location">WORKSPACE <span>/</span> <span id="editorProjectLabel">PERSONAL</span></span><div class="editor-actions"><button class="subtle-button" id="previewToggle">Preview</button><button class="primary-button compact" id="saveNote">Save note <kbd>⌘ ↵</kbd></button></div></header>
+      <div class="editor-body"><div class="editor-main"><input id="noteTitle" class="title-input" placeholder="Give this note a name…" maxlength="90" /><div class="meta-row"><select id="noteKind" aria-label="Note type"><option value="snippet">⌘ &nbsp; SNIPPET</option><option value="decision">◇ &nbsp; DECISION</option><option value="fix">↗ &nbsp; TROUBLESHOOTING</option></select><span class="meta-divider"></span><select id="noteProject" aria-label="Project"></select><button class="star-edit" id="starEdit">☆</button></div><div class="editor-toolbar"><span>MARKDOWN</span><div><button data-insert="**bold text**" title="Bold">B</button><button data-insert="`inline code`" title="Code">&lt;/&gt;</button><button data-insert="[link](url)" title="Link">↗</button><button data-insert="- list item" title="List">☷</button><button data-insert="```\ncode here\n```" title="Code block">▤</button></div></div><textarea id="noteBody" spellcheck="false" placeholder="Write it down while it’s fresh…&#10;&#10;Markdown works here. Use ``` for code blocks."></textarea><div id="markdownPreview" class="markdown-preview hidden"></div></div>
+      <aside class="editor-aside"><label for="noteTags">TAGS</label><input id="noteTags" placeholder="Add tags, separated by commas" /><small>Keep tags short and useful.</small><div class="aside-rule"></div><label>GOOD TO KNOW</label><p>Everything is saved in this browser. Export your vault anytime to keep a backup or move it elsewhere.</p><div class="editor-tip"><span>⌘</span><div><strong>Quick save</strong><small>Press <kbd>⌘</kbd> + <kbd>Enter</kbd> from anywhere.</small></div></div></aside></div>
+      <footer class="editor-footer"><span id="saveStatus">Unsaved changes</span><span>Markdown · Local-first</span></footer>
+    </section>
+  </div>
+
+  <div class="search-overlay hidden" id="searchOverlay"><div class="search-dialog"><div class="search-input-row"><span>⌕</span><input id="searchInput" placeholder="Search notes, tags, projects…" autocomplete="off" /><kbd>ESC</kbd></div><div class="search-hint">TYPE TO SEARCH YOUR VAULT <span>↑ ↓ TO NAVIGATE</span></div><div id="searchResults"></div></div></div>
+  <div class="toast" id="toast"></div><input type="file" id="fileInput" accept=".md,.markdown,text/markdown" multiple hidden />
+  <div class="shortcuts hidden" id="shortcuts"><div class="shortcuts-card"><button id="closeShortcuts">×</button><span class="eyebrow">A FEW SHORTCUTS</span><h2>Move at your speed.</h2><div><span>New note</span><kbd>N</kbd></div><div><span>Search vault</span><kbd>⌘ K</kbd></div><div><span>Save note</span><kbd>⌘ ↵</kbd></div><div><span>Close dialog</span><kbd>ESC</kbd></div><div><span>Navigate notes</span><kbd>J / K</kbd></div></div></div>
+  <script src="app.js"></script>
+</body>
+</html>
